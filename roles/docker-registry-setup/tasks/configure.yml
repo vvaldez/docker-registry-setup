@@ -1,0 +1,69 @@
+---
+- name: install docker packages
+  package:
+    name: "{{ package }}"
+    state: present
+  loop: "{{ docker_registry_setup_packages }}"
+  loop_control:
+    loop_var: package
+  notify: "restart docker"
+
+- name: configure firewalld for docker
+  firewalld:
+    port:  "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+  loop: "{{ docker_registry_setup_ports }}"
+  notify:
+    - "restart firewalld"
+
+- name: check for entries in /etc/sysconfig/docker
+  slurp:
+    src: /etc/sysconfig/docker
+  register: docker_config
+
+- name: check if insecure options already added to /etc/sysconfig/docker
+  set_fact:
+    docker_registry_option_in_config: True
+  when: 
+    - (docker_config.content | b64decode ) is search('INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}"')
+
+- name: add registry option config to '/etc/sysconfig/docker' if needed
+  lineinfile:
+    dest: '/etc/sysconfig/docker'
+    line: 'INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}"'
+    state: present
+  notify: "restart docker"
+  become: yes
+  when: docker_registry_option_in_config | default(False) | bool == False
+
+- name: check if registry urls already added to /etc/sysconfig/docker
+  set_fact:
+    docker_urls_in_config: True
+  when: 
+    - (docker_config.content | b64decode ) is search(docker_registry_setup_local_hostname)
+    - (docker_config.content | b64decode ) is search(docker_registry_setup_upstream_hostname)
+
+- name: add config to '/etc/sysconfig/docker' if needed
+  lineinfile:
+    dest: '/etc/sysconfig/docker'
+    line: 'INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}"'
+    regexp: '^INSECURE_REGISTRY=.*$'
+    state: present
+  notify: "restart docker"
+  become: yes
+  when:
+    - docker_urls_in_config | default(False) | bool == False
+    - docker_registry_option_in_config | default(False) | bool == True
+
+- name: set fact if docker was already configured
+  set_fact:
+    docker_registry_setup_configured: True
+  when: 
+    - docker_registry_option_in_config | default(False) | bool == True
+    - docker_urls_in_config | default(False) | bool == True
+
+# Restart docker right away
+- meta: flush_handlers
+...

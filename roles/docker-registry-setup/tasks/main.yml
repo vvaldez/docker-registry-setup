@@ -1,0 +1,25 @@
+---
+# This task checks for any images on the local registry
+- import_tasks: check.yml
+
+# Skip config if images found on local registry (override with 'docker_registry_setup_force: True')
+- import_tasks: skip.yml
+  when: 
+    - docker_registry_setup_configured | default(False) | bool == True
+    - docker_registry_setup_force | default(False) | bool == False
+
+# Configure docker registry 
+- import_tasks: configure.yml
+  when: (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
+
+# Download images from upstream registry and push them to local registry
+- import_tasks: sync.yml
+  when: docker_registry_setup_sync | default(True) | bool == True
+
+# Check and display images found with verbosity: 1
+- import_tasks: check.yml
+
+# Display error if registry is not populated with container images 
+- import_tasks: error.yml
+  when: docker_catalog.json.repositories == [] | default(False)
+...

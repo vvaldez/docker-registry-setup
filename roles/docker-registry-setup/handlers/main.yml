@@ -1,0 +1,20 @@
+---
+- name: restart docker
+  listen: "restart docker"
+  systemd:
+    state: restarted
+    name: "{{ service }}" 
+    enabled: yes
+  become: yes
+  loop: "{{ docker_registry_setup_services }}"
+  loop_control:
+    loop_var: service
+
+- name: restart firewalld
+  listen: "restart firewalld"
+  systemd:
+    state: restarted
+    name: firewalld
+    enabled: yes
+  become: yes
+...

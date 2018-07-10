@@ -1,0 +1,6 @@
+---
+# Adding in case a force is desired
+- name: skipping docker registry setup, images already exist. override with the variable 'docker_registry_setup_force{{':'}} True'
+  pause:
+    seconds: "{{ pause_delay | default(10) }}"
+...

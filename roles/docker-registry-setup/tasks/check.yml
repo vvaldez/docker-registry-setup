@@ -1,0 +1,25 @@
+---
+- name: check for docker images
+  uri: 
+    url: http://{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/v2/_catalog
+    timeout: "{{ pause_delay | default(3) }}"
+    status: 200,-1
+  register: docker_catalog
+  ignore_errors: true
+
+- set_fact:
+    repositories: []
+    
+- name: capture any repositories
+  set_fact:
+    repositories: "{{ docker_catalog.json.repositories|default('[]') }}"
+  when: not docker_catalog.failed
+
+- debug:
+    msg: "Found the following repositories{{':'}} {{ repositories }}"
+
+- name: check if any images exist
+  set_fact:
+    docker_registry_setup_configured: True
+  when: not repositories == []
+...

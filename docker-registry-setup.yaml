@@ -1,0 +1,6 @@
+---
+- hosts: registry
+  tasks:
+    - import_role:
+        name: docker-registry-setup
+...
