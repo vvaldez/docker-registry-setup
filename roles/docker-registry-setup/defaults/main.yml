@@ -18,6 +18,9 @@ docker_registry_setup_image_prefix: "openstack-"
 docker_registry_setup_image_rhosp_version: rhosp13
 docker_registry_setup_image_tag: latest
 
+# This boolean can explicitly tell the role that the inventory hosts are in fact Undercloud servers. By default this is false and the data structure defined in 'docker_registry_setup_undercloud_profile' is used to dynamically determine if the host is an Undercloud or not.
+docker_registry_setup_on_undercloud: False
+
 # For an OpenStack Undercloud docker registry, these files are generated.
 docker_registry_setup_upstream_images_file: "/tmp/upstream-container-images.yaml"
 docker_registry_setup_overcloud_images_file: "/tmp/overcloud-images.yaml"
@@ -96,4 +99,39 @@ docker_registry_setup_images:
   - swift-container
   - swift-object
   - swift-proxy-server
+
+# This variable defines the Undercloud profile. This 
+docker_registry_setup_undercloud_profile:
+  packages:
+    - instack-undercloud
+    - python2-openstackclient
+  services:
+    - openstack-glance-api.service
+    - openstack-heat-engine.service
+    - openstack-ironic-conductor.service
+    - openstack-ironic-inspector-dnsmasq.service
+    - openstack-ironic-inspector.service
+    - openstack-mistral-api.service
+    - openstack-mistral-engine.service
+    - openstack-mistral-executor.service
+    - openstack-nova-api.service
+    - openstack-nova-compute.service
+    - openstack-nova-conductor.service
+    - openstack-nova-scheduler.service
+    - openstack-swift-account-reaper.service
+    - openstack-swift-account.service
+    - openstack-swift-container-sync.service
+    - openstack-swift-container-updater.service
+    - openstack-swift-container.service
+    - openstack-swift-object-expirer.service
+    - openstack-swift-object-reconstructor.service
+    - openstack-swift-object-updater.service
+    - openstack-swift-object.service
+    - openstack-swift-proxy.service
+    - openstack-zaqar@.service
+  files:
+    - "/home/stack/stackrc"
+    - "/home/stack/undercloud.conf"
+  dirs:
+    - "/home/stack/"
 ...
