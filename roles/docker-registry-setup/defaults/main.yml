@@ -1,30 +1,50 @@
 ---
+# Default is the upstream CDN registry.access.redhat.com but can be set to anything
 docker_registry_setup_upstream_hostname: registry.access.redhat.com
-# This should be the same as undercloud, for now just setting static example IP but can be in inventory
-docker_registry_setup_local_hostname: "{{ inventory_hostname }}"
-#docker_registry_setup_local_hostname: "{{ ansible_all_ipv4_addresses | ipaddr(provisioning_cidr) | first() }}"
+
+# The upstream CDN doesn't use a port, so there are branch logic for split tasks based on if a port is used here or not. If using a different source other than the default CDN, then specify the port the registry is listening on here:
 docker_registry_setup_upstream_port: ''
+
+# This should be the target host, but can be set to something else if needed, for example:
+#docker_registry_setup_local_hostname: "{{ ansible_all_ipv4_addresses | ipaddr(provisioning_cidr) | first() }}"
+docker_registry_setup_local_hostname: "{{ inventory_hostname }}"
+
+# Local port to configure the registry on this host
 docker_registry_setup_local_port: 5000
+
+# These are tunable if needed, but set to the default on CDN for OpenStack
 docker_registry_setup_url_suffix: "/v2/_catalog"
 docker_registry_setup_image_prefix: "openstack-"
 docker_registry_setup_image_rhosp_version: rhosp13
 docker_registry_setup_image_tag: latest
-docker_registry_setup_upstream_images_file: "upstream-container-images.yaml"
-docker_registry_setup_overcloud_images_file: "overcloud-images.yaml"
+
+# For an OpenStack Undercloud docker registry, these files are generated.
+docker_registry_setup_upstream_images_file: "/tmp/upstream-container-images.yaml"
+docker_registry_setup_overcloud_images_file: "/tmp/overcloud-images.yaml"
+
+# Should the local registry sync with upstream registry?
 docker_registry_setup_sync: True
+
+# This forces setup of local registry even if one is already setup and hosting images
 docker_registry_setup_force: False
+
+# Packages needed to setup docker registry
 docker_registry_setup_packages:
   - docker
   - docker-distribution
   - docker-python
   - python-docker-py
+
+# docker registry services to configure
 docker_registry_setup_services:
   - docker
   - docker-distribution
-docker_registry_setup_ports:
-  - 5000/tcp
 
-# Container images to populate in registry
+# ports used for setup
+docker_registry_setup_ports:
+  - "{{ docker_registry_setup_local_port }}/tcp"
+
+# Container images to populate in registry. This list by default only lists the OpenStack container images needed to deploy an OverCloud, but any images could be listed here, as long as they are found on the CDN
 # This list was taken from the overcloud-images.yaml that `openstack overcloud container image prepare` command outputs. As that file contains several variables used in the deployment, several of the container images are the same, thus causing duplicates. This list has been cleaned up of all dupes.
 docker_registry_setup_images:
   - aodh-api

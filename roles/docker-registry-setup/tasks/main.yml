@@ -12,14 +12,28 @@
 - import_tasks: configure.yml
   when: (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
 
-# Download images from upstream registry and push them to local registry
+# Additional task for Undercloud configure
+- import_tasks: undercloud/configure.yml
+  when: 
+    - (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
+    - docker_registry_setup_on_undercloud | default(False) | bool == True
+
+# Download images from upstream registry and push them to local registry (non-Undercloud)
 - import_tasks: sync.yml
-  when: docker_registry_setup_sync | default(True) | bool == True
+  when:
+    - docker_registry_setup_sync | default(True) | bool == True
+    - docker_registry_setup_on_undercloud | default(False) | bool == False
+
+# Same thing but for Undercloud
+- import_tasks: undercloud/sync.yml
+  when:
+    - docker_registry_setup_on_undercloud | default(False) | bool == True
+    - docker_registry_setup_sync | default(True) | bool == True
 
 # Check and display images found with verbosity: 1
 - import_tasks: check.yml
 
 # Display error if registry is not populated with container images 
 - import_tasks: error.yml
-  when: docker_catalog.json.repositories == [] | default(False)
+  when: docker_registry_setup_configured | default(False) | bool == False
 ...

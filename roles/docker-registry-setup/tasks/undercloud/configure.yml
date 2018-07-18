@@ -1,0 +1,11 @@
+---
+# This may not need to create the deployment file which is --output-env-file since we have a predictable template with essentially the same info, but including it just in case it is needed
+- name: create docker image files for upload and later deployment
+  shell: . /home/stack/stackrc ; openstack overcloud container image prepare \
+      --namespace={{ undercloud_docker_images_sync_upstream_hostname }}/{{ docker_registry_setup_image_rhosp_version }} \
+      --push-destination={{ undercloud_docker_images_sync_local_hostname }}:{{ docker_registry_setup_port }} \
+      --prefix={{ undercloud_docker_images_sync_image_prefix }} \
+      --tag-from-label {version}-{release} \
+      --output-env-file={{ undercloud_docker_images_sync_overcloud_images_file }} \
+      --output-images-file={{ undercloud_docker_images_sync_upstream_images_file }}
+...

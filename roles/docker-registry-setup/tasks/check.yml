@@ -1,7 +1,7 @@
 ---
 - name: check for docker images
   uri: 
-    url: http://{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/v2/_catalog
+    url: http://{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}{{ docker_registry_setup_url_suffix }}
     timeout: "{{ pause_delay | default(3) }}"
     status: 200,-1
   register: docker_catalog
