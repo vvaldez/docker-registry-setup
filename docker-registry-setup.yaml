@@ -15,12 +15,4 @@
       vars:
         docker_registry_setup_undercloud_check: False
         docker_registry_setup_on_undercloud: True
-
-- hosts: registry,undercloud
-  tasks:
-    - import_role:
-        name: docker-registry-setup
-      vars:
-        docker_registry_setup_undercloud_check: False
-        docker_registry_setup_sync: False
 ...
