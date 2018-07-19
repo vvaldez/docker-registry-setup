@@ -2,7 +2,7 @@
 # Packages
 - name: check if this system has {{ package }}
   command: rpm -q {{ package }}
-  register: packages_status
+  register: package_status
   ignore_errors: yes
   loop: "{{ docker_registry_setup_undercloud_profile.packages }}"
   loop_control:
