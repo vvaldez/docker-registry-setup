@@ -3,6 +3,7 @@
 - name: check if this system has {{ package }}
   command: rpm -q {{ package }}
   register: package_status
+  no_log: "{{ quiet | default(True) }}"
   ignore_errors: yes
   loop: "{{ docker_registry_setup_undercloud_profile.packages }}"
   loop_control:
@@ -19,6 +20,7 @@
 # Services
 - name: check if this system has {{ service }}
   command: systemctl status {{ service }}
+  no_log: "{{ quiet | default(True) }}"
   register: service_status
   ignore_errors: yes
   loop: "{{ docker_registry_setup_undercloud_profile.services }}"
