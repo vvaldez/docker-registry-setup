@@ -1,4 +1,7 @@
 ---
+- import_tasks: undercloud/check.yml
+  when: docker_registry_setup_on_undercloud | default('') == ''
+
 - name: check for docker images
   uri: 
     url: http://{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}{{ docker_registry_setup_url_suffix }}

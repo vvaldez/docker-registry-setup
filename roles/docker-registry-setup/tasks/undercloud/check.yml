@@ -70,6 +70,9 @@
   loop_control:
     loop_var: dir
 
+-  set_fact:
+    docker_registry_setup_on_undercloud: False
+
 # Set undercloud option if everything matches
 - name: set fact if host profile matches undercloud
   set_fact:
@@ -79,4 +82,9 @@
     - docker_registry_setup_undercloud_services | default(False) | bool == True
     - docker_registry_setup_undercloud_files | default(False) | bool == True
     - docker_registry_setup_undercloud_dirs | default(False) | bool == True
+
+# Set port to default 8787 if undercloud
+  set_fact:
+    docker_registry_setup_local_port: 8787
+  when: docker_registry_setup_on_undercloud | default(False) | bool == True
 ...
