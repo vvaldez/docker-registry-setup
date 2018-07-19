@@ -12,6 +12,9 @@ docker_registry_setup_local_hostname: "{{ inventory_hostname }}"
 # Local port to configure the registry on this host
 docker_registry_setup_local_port: 5000
 
+# Set to one of "['firewalld,'iptables'] to manage the local firewall
+docker_registry_setup_firewall: "firewalld"
+
 # These are tunable if needed, but set to the default on CDN for OpenStack
 docker_registry_setup_url_suffix: "/v2/_catalog"
 docker_registry_setup_image_prefix: "openstack-"
@@ -43,7 +46,7 @@ docker_registry_setup_services:
   - docker
   - docker-distribution
 
-# ports used for setup
+# ports used for setup in local firewall
 docker_registry_setup_ports:
   - "{{ docker_registry_setup_local_port }}/tcp"
 

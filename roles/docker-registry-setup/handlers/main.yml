@@ -17,4 +17,12 @@
     name: firewalld
     enabled: yes
   become: yes
+
+- name: restart iptables
+  listen: "restart iptables"
+  systemd:
+    state: restarted
+    name: iptables-services
+    enabled: yes
+  become: yes
 ...

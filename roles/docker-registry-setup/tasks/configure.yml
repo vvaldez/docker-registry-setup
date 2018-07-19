@@ -17,6 +17,23 @@
   loop: "{{ docker_registry_setup_ports }}"
   notify:
     - "restart firewalld"
+  when: docker_registry_setup_firewall == 'firewalld'
+
+- name: configure iptables for docker
+  iptables:
+    action: insert
+    rule_num: 1
+    chain: INPUT
+    protocol: "{{ item.split('/').1"
+    destination_port: "{{ docker_registry_setup_ports }}"
+    ctstate: NEW
+    syn: match
+    jump: ACCEPT
+    comment: Accept incoming docker registry requests - added by Ansible
+  loop: "{{ docker_registry_setup_ports }}"
+  notify:
+    - "restart iptables"
+  when: docker_registry_setup_firewall == 'iptables'
 
 - name: check for entries in /etc/sysconfig/docker
   slurp:
