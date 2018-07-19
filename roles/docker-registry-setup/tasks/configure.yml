@@ -24,8 +24,8 @@
     action: insert
     rule_num: 1
     chain: INPUT
-    protocol: "{{ item.split('/').1 }}"
-    destination_port: "{{ item.split('/').0 }}"
+    protocol: "{{ port.split('/').1 }}"
+    destination_port: "{{ port.split('/').0 }}"
     ctstate: NEW
     syn: match
     jump: ACCEPT
