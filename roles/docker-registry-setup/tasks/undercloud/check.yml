@@ -87,9 +87,4 @@
   set_fact:
     docker_registry_setup_on_undercloud: False
   when: (docker_registry_setup_undercloud_packages | default(False) | bool == False) or (docker_registry_setup_undercloud_services | default(False) | bool == False) or (docker_registry_setup_undercloud_files | default(False) | bool == False) or (docker_registry_setup_undercloud_dirs | default(False) | bool == False)
-
-# Set port to default 8787 if undercloud
-- set_fact:
-    docker_registry_setup_local_port: 8787
-  when: docker_registry_setup_on_undercloud | default(False) | bool == True
 ...
