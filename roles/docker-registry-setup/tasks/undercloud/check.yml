@@ -36,7 +36,7 @@
 # Files
 - name: check if this system has {{ file }}
   stat:
-    path: {{ file }}
+    path: "{{ file }}"
   register: file_status
   ignore_errors: yes
   loop: "{{ docker_registry_setup_undercloud_profile.files }}"
@@ -54,7 +54,7 @@
 # Dirs
 - name: check if this system has {{ dir }}
   stat:
-    path: {{ dir }}
+    path: "{{ dir }}"
   register: dir_status
   loop: "{{ docker_registry_setup_undercloud_profile.dirs }}"
   loop_control:
