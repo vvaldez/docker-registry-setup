@@ -2,7 +2,7 @@
 # Default is the upstream CDN registry.access.redhat.com but can be set to anything
 docker_registry_setup_upstream_hostname: registry.access.redhat.com
 
-# The upstream CDN doesn't use a port, so there are branch logic for split tasks based on if a port is used here or not. If using a different source other than the default CDN, then specify the port the registry is listening on here (e.g. 5000):
+# The upstream CDN doesn't use a port, so there is branch logic for split tasks based on if a port is used here or not. If using a different source other than the default CDN, then specify the port the registry is listening on here (e.g. 5000):
 docker_registry_setup_upstream_port: ''
 
 # This should be the target host, but can be set to something else if needed, for example:

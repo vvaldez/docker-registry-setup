@@ -2,10 +2,11 @@
 This role is intended to be run on CentOS/RHEL but may work with Fedora or other Linux distributions. It sets up a docker registry on the target host, then contacts an upstream (can be CDN or another internal registry) and syncs a list of images from it, then can serve those out. The default variables in the role have the required images for an OpenStack OverCloud install, but could be any images. Steps taken from https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index
 
 ## Define your environment
-The 'roles/docker-registry-setup/defaults/main.yml. can be set to whatever is appropriate in your environment. Here are a two sample scenarios. 
+The 'roles/docker-registry-setup/defaults/main.yml'. can be set to whatever is appropriate in your environment. Here are a two sample scenarios. 
 
 The first scenario uses the Red Hat Registry CDN as the 'upstream' registy and a local RHEL server as 'local' and configures a registry on it. Now this Local Registry is able to serve images out.
 
+### Scenario 1: Setup a Registry from Upstream
 ```
    upstream                        local
 +-------------+                +-------------+
@@ -17,6 +18,12 @@ The first scenario uses the Red Hat Registry CDN as the 'upstream' registy and a
 +-------------+                +-------------+
 ```
 
+A sample command to achieve this might be:
+```
+ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_undercloud_check=True' -l registry -e "docker_registry_setup_on_undercloud=False" -e "docker_registry_setup_sync=True"
+```
+
+### Scenario 2: Setup an Undercloud Registry off an internal Registry
 This next scenario actually uses the previously configured Local Registry as the new 'upstream' for this scenario. The 'local' registry in this case is an Undercloud server. 
 
 ```
@@ -30,17 +37,17 @@ This next scenario actually uses the previously configured Local Registry as the
 +-------------+                +-------------+
 ```
 
-Note that though the same role is used in both cases, there are actually different tasks used for setup of a standard docker registry and an Undercloud registry, but the end result is the same. One example is that the 'openstack' CLI is used to geenrate a list of required images, which is present on an Undercloud only.
+A sample command to achieve this might be:
+```
+ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_undercloud_check=False' -l undercloud -e 'docker_registry_setup_on_undercloud=True' -e 'docker_registry_setup_sync=True' -e 'docker_registry_setup_upstream_hostname=registry.example.com'
+```
 
-## Usage
-To use this role, call it with something such as:
 
----
-- hosts: registry
-  tasks:
-    - import_role:
-        name: docker-registry-setup
-...
+Note that though the same role is used in both cases, there are actually different tasks used for setup of a standard docker registry and an Undercloud registry, but the end result is the same. One example is that the 'openstack' CLI is used to geenrate a list of required images, which is present on an Undercloud only. It is also possibly to simply call the provided playbook to configure multple types at once:
+
+```
+ansible-playbook -i inv.yaml docker-registry-setup.yaml
+```
 
 ## Workflow
 The host will be configured as a docker registry
