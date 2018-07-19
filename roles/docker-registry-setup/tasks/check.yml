@@ -26,4 +26,28 @@
 # only check for Undercloud match if user didn't explicitly set that bool on true (meaning they are expecting the host to be an Undercloud, so no need to dynamically check)
 - import_tasks: undercloud/check.yml  
   when: not docker_registry_setup_on_undercloud | default(False) | bool == True
+
+# If the variable 'docker_registry_setup_firewall' is not set, determine firewall type
+- name: check what filrewall this system uses if not specified
+  block:
+    - name: check for firewalld
+      command: systemctl status firewalld
+      register: firewalld_status
+      ignore_errors: yes
+      
+    - name: check for iptables
+      command: systemctl status iptables-services
+      register: iptables_status
+      ignore_errors: yes
+      
+    - name: set fact for discovered firewall type
+      set_fact:
+        docker_registry_setup_firewall: 'firewalld' 
+      when: not firewalld_status.failed | default(None)
+
+    - name: set fact for discovered firewall type
+      set_fact:
+        docker_registry_setup_firewall: 'iptables' 
+      when: not iptables_status.failed | default(None)
+  when: docker_registry_setup_firewall | default('')  == ''
 ...
