@@ -22,7 +22,7 @@
   listen: "restart iptables"
   systemd:
     state: restarted
-    name: iptables-services
+    name: iptables
     enabled: yes
   become: yes
 ...
