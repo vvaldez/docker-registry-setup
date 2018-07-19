@@ -25,12 +25,14 @@
     rule_num: 1
     chain: INPUT
     protocol: "{{ item.split('/').1 }}"
-    destination_port: "{{ docker_registry_setup_ports }}"
+    destination_port: "{{ item.split('/').0 }}"
     ctstate: NEW
     syn: match
     jump: ACCEPT
     comment: Accept incoming docker registry requests - added by Ansible
   loop: "{{ docker_registry_setup_ports }}"
+  loop_control:
+    loop_var: port
   notify:
     - "restart iptables"
   when: docker_registry_setup_firewall == 'iptables'
