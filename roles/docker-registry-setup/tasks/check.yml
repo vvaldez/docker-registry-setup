@@ -23,44 +23,7 @@
     docker_registry_setup_configured: True
   when: not repositories == []
 
-- block:
-    - name: check if this system is an OpenStack Undercloud
-      command: rpm -q {{ package }}
-      register: packages_status
-      ignore_errors: yes
-      loop: "{{ docker_registry_setup_undercloud_profile.packages }}"
-      loop_control:
-        loop_var: package
-    
-    - name: check if this system is an OpenStack Undercloud
-      stat
-      register: files_status
-      ignore_errors: yes
-      loop: "{{ docker_registry_setup_undercloud_profile.files }}"
-      loop_control:
-        loop_var: files
-      
-    - name: check if this system is an OpenStack Undercloud
-      stat
-      register: services_status
-      ignore_errors: yes
-      loop: "{{ docker_registry_setup_undercloud_profile.services }}"
-      loop_control:
-        loop_var: services
-      
-    - name: check if this system is an OpenStack Undercloud
-      stat
-      register: dirs_status
-      ignore_errors: yes
-      loop: "{{ docker_registry_setup_undercloud_profile.dirs }}"
-      loop_control:
-        loop_var: dirs
-  
-- block:
-    - name: set fact if services match
-      set_fact:
-        - docker_registry_setup_undercloud_services: True 
-        
-  when:
-    - 
+# only check for Undercloud match if user didn't explicitly set that bool on true (meaning they are expecting the host to be an Undercloud, so no need to dynamically check)
+- import_tasks: undercloud/check.yml  
+  when: not docker_registry_setup_on_undercloud | default(False) | bool == True
 ...

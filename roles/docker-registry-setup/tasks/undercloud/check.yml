@@ -1,0 +1,72 @@
+---
+# Packages
+- name: check if this system has {{ package }}
+  command: rpm -q {{ package }}
+  register: packages_status
+  ignore_errors: yes
+  loop: "{{ docker_registry_setup_undercloud_profile.packages }}"
+  loop_control:
+    loop_var: package
+
+- name: set fact if packages match
+  set_fact:
+    docker_registry_setup_undercloud_packages: True 
+  when: not package.failed | default(None)
+  loop: "{{ package_status.results }}"
+  loop_control:
+    loop_var: package
+    
+# Services
+- name: check if this system has {{ service }}
+  command: systemctl status {{ service }}
+  register: service_status
+  ignore_errors: yes
+  loop: "{{ docker_registry_setup_undercloud_profile.services }}"
+  loop_control:
+    loop_var: service
+  
+- name: set fact if services match
+  set_fact:
+    docker_registry_setup_undercloud_services: True 
+  when: not service.failed | default(None)
+  loop: "{{ service_status.results }}"
+  loop_control:
+    loop_var: service
+    
+# Files
+- name: check if this system has {{ file }}
+  stat:
+    path: {{ file }}
+  register: file_status
+  ignore_errors: yes
+  loop: "{{ docker_registry_setup_undercloud_profile.files }}"
+  loop_control:
+    loop_var: file
+
+- name: set fact if files match
+  set_fact:
+    docker_registry_setup_undercloud_files: True 
+  when: file.stat.exists | default(False)
+  loop: "{{ file_status.results }}"
+  loop_control:
+    loop_var: file
+
+# Dirs
+- name: check if this system has {{ dir }}
+  stat:
+    path: {{ dir }}
+  register: dir_status
+  loop: "{{ docker_registry_setup_undercloud_profile.dirs }}"
+  loop_control:
+    loop_var: dir
+
+- name: set fact if dirs match
+  set_fact:
+    docker_registry_setup_undercloud_dirs: True 
+  when: 
+    - dir.stat.exists | default(False)
+    - dir.stat.isdir | default(False)
+  loop: "{{ dir_status.results }}"
+  loop_control:
+    loop_var: dir
+...
