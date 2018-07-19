@@ -72,23 +72,8 @@
   loop_control:
     loop_var: dir
 
-- name: debug info
-  vars:
-    msg: |
-        --------------------------------
-        {{ docker_registry_setup_undercloud_packages | to_nice_json }}
-        {{ docker_registry_setup_undercloud_services | to_nice_json }}
-        {{ docker_registry_setup_undercloud_files | to_nice_json }}
-        {{ docker_registry_setup_undercloud_dirs | to_nice_json }}
-        --------------------------------
-
-  debug:
-    msg: "{{ msg.split('\n') }}"
-
-- pause:
-
-#- set_fact:
-#docker_registry_setup_on_undercloud: False
+- set_fact:
+    docker_registry_setup_on_undercloud: False
 
 # Set undercloud option if everything matches
 - name: set fact if host profile matches undercloud
@@ -101,9 +86,7 @@
     - docker_registry_setup_undercloud_dirs | default(False) | bool == True
 
 # Set port to default 8787 if undercloud
-  set_fact:
+- set_fact:
     docker_registry_setup_local_port: 8787
   when: docker_registry_setup_on_undercloud | default(False) | bool == True
-
-- pause:
 ...
