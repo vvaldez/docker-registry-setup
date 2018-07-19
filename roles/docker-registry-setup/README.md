@@ -56,6 +56,7 @@ There is also a check duing the docker configuration if /etc/syscoinfig/docker h
 
 ## Verifying
 Pull an image:
+```
 [root@undercloud stack]# docker pull <hostname>:5000/rhosp13/openstack-iscsid:latest
 Trying to pull repository 172.16.0.1:8787/rhosp13/openstack-iscsid ...
 13.0-38: Pulling from 172.16.0.1:8787/rhosp13/openstack-iscsid
@@ -69,6 +70,7 @@ Status: Downloaded newer image for 172.16.0.1:8787/rhosp13/openstack-iscsid:13.0
 [root@undercloud stack]# docker images
 REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
 172.16.0.1:8787/rhosp13/openstack-iscsid   13.0-38             47f41decc493        3 weeks ago         458 MB
+```
 
 ## Syncing
 Normally the local registry will sync with upstream. To disable this set 'docker_registry_sync: False'
