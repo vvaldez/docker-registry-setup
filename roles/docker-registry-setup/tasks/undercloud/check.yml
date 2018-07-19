@@ -89,4 +89,14 @@
   set_fact:
     docker_registry_setup_local_port: 8787
   when: docker_registry_setup_on_undercloud | default(False) | bool == True
+
+- debug:
+    var: "{{ item }}"
+    verbosity: 1
+  loop:
+    - docker_registry_setup_undercloud_packes
+    - docker_registry_setup_undercloud_services
+    - docker_registry_setup_undercloud_files
+    - docker_registry_setup_undercloud_dirs
+    - docker_registry_setup_local_port
 ...

@@ -1,5 +1,5 @@
 ---
-- hosts: registry
+- hosts: registry,undercloud
   tasks:
     - import_role:
         name: docker-registry-setup
