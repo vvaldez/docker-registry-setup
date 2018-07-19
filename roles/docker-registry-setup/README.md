@@ -6,6 +6,7 @@ The 'roles/docker-registry-setup/defaults/main.yml. can be set to whatever is ap
 
 The first scenario uses the Red Hat Registry CDN as the 'upstream' registy and a local RHEL server as 'local' and configures a registry on it. Now this Local Registry is able to serve images out.
 
+```
    upstream                        local
 +-------------+                +-------------+
 |             |                |             |
@@ -14,9 +15,11 @@ The first scenario uses the Red Hat Registry CDN as the 'upstream' registy and a
 | (CDN)       |                |             |
 |             |                |             |
 +-------------+                +-------------+
+```
 
 This next scenario actually uses the previously configured Local Registry as the new 'upstream' for this scenario. The 'local' registry in this case is an Undercloud server. 
 
+```
    upstream                        local
 +-------------+                +-------------+
 |             |                |             |
@@ -25,6 +28,7 @@ This next scenario actually uses the previously configured Local Registry as the
 |             |                |             |
 |             |                |             |
 +-------------+                +-------------+
+```
 
 Note that though the same role is used in both cases, there are actually different tasks used for setup of a standard docker registry and an Undercloud registry, but the end result is the same. One example is that the 'openstack' CLI is used to geenrate a list of required images, which is present on an Undercloud only.
 
