@@ -1,7 +1,7 @@
 ---
 # only check for Undercloud match if user didn't explicitly set that bool on true (meaning they are expecting the host to be an Undercloud, so no need to dynamically check)
 - import_tasks: undercloud/check.yml
-  when: docker_registry_setup_on_undercloud | default('') == ''
+  when: docker_registry_setup_undercloud_check | default(False) == True
 
 - name: check for docker images
   uri: 

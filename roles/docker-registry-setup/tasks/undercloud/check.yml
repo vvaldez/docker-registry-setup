@@ -83,14 +83,10 @@
     - docker_registry_setup_undercloud_dirs | default(False) | bool == True
 
 # Set undercloud option to false if not a match
-- name: set fact if host profile matches undercloud
+- name: set fact if host profile does not match undercloud
   set_fact:
     docker_registry_setup_on_undercloud: False
-  when:
-    - docker_registry_setup_undercloud_packages | default(False) | bool == False
-    - docker_registry_setup_undercloud_services | default(False) | bool == False
-    - docker_registry_setup_undercloud_files | default(False) | bool == False
-    - docker_registry_setup_undercloud_dirs | default(False) | bool == False
+  when: (docker_registry_setup_undercloud_packages | default(False) | bool == False) or (docker_registry_setup_undercloud_services | default(False) | bool == False) or (docker_registry_setup_undercloud_files | default(False) | bool == False) or (docker_registry_setup_undercloud_dirs | default(False) | bool == False)
 
 # Set port to default 8787 if undercloud
 - set_fact:
