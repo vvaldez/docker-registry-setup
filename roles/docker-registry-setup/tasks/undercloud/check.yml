@@ -72,15 +72,30 @@
   loop_control:
     loop_var: dir
 
--  set_fact:
-    docker_registry_setup_on_undercloud: False
+- name: debug info
+  vars:
+    msg: |
+        --------------------------------
+        {{ docker_registry_setup_undercloud_packages | to_nice_json }}
+        {{ docker_registry_setup_undercloud_services | to_nice_json }}
+        {{ docker_registry_setup_undercloud_files | to_nice_json }}
+        {{ docker_registry_setup_undercloud_dirs | to_nice_json }}
+        --------------------------------
+
+  debug:
+    msg: "{{ msg.split('\n') }}"
+
+- pause:
+
+#- set_fact:
+#docker_registry_setup_on_undercloud: False
 
 # Set undercloud option if everything matches
 - name: set fact if host profile matches undercloud
   set_fact:
     docker_registry_setup_on_undercloud: True
   when:
-    - docker_registry_setup_undercloud_packes | default(False) | bool == True
+    - docker_registry_setup_undercloud_packages | default(False) | bool == True
     - docker_registry_setup_undercloud_services | default(False) | bool == True
     - docker_registry_setup_undercloud_files | default(False) | bool == True
     - docker_registry_setup_undercloud_dirs | default(False) | bool == True
@@ -89,16 +104,6 @@
   set_fact:
     docker_registry_setup_local_port: 8787
   when: docker_registry_setup_on_undercloud | default(False) | bool == True
-
-- debug:
-    var: "{{ item }}"
-    verbosity: 1
-  loop:
-    - "{{ docker_registry_setup_undercloud_packes }}"
-    - "{{ docker_registry_setup_undercloud_services }}"
-    - "{{ docker_registry_setup_undercloud_files }}"
-    - "{{ docker_registry_setup_undercloud_dirs }}"
-    - "{{ docker_registry_setup_local_port }}"
 
 - pause:
 ...
