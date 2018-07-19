@@ -1,6 +1,6 @@
 ---
-- name: "download images from upstream registry {{ undercloud_docker_images_sync_upstream_hostname }} and upload into local undercloud registry at {{ docker_registry_setup_local_hostname }}"
+- name: "download images from upstream registry {{ docker_registry_setup_upstream_hostname }} and upload into local undercloud registry at {{ docker_registry_setup_local_hostname }}"
   shell: . /home/stack/stackrc ; openstack overcloud container image upload \
       --verbose \
-      --config-file {{ undercloud_docker_images_sync_upstream_images_file }}
+      --config-file {{ docker_registry_setup_upstream_images_file }}
 ...
