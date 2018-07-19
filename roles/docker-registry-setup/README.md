@@ -20,7 +20,7 @@ The first scenario uses the Red Hat Registry CDN as the 'upstream' registy and a
 
 A sample command to achieve this might be:
 ```
-ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_undercloud_check=False' -e "docker_registry_setup_on_undercloud=False" -l registry
+ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_image_rhosp_version=rhosp12' -e 'docker_registry_setup_undercloud_check=False' -e "docker_registry_setup_on_undercloud=False" -l registry
 ```
 
 ### Scenario 2: Setup an Undercloud Registry off an internal Registry
@@ -39,7 +39,7 @@ This next scenario actually uses the previously configured Local Registry as the
 
 A sample command to achieve this might be:
 ```
-ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_undercloud_check=False' -e 'docker_registry_setup_on_undercloud=True' -e 'docker_registry_setup_upstream_hostname=registry.example.com' -l undercloud
+ansible-playbook -i inv.yaml docker-registry-setup.yaml -e 'docker_registry_setup_image_rhosp_version=rhosp12' -e 'docker_registry_setup_undercloud_check=False' -e 'docker_registry_setup_on_undercloud=True' -e 'docker_registry_setup_upstream_hostname=registry.example.com' -l undercloud
 ```
 Note that though the same role is used in both cases, there are actually different tasks used for setup of a standard docker registry and an Undercloud registry, but the end result is the same. One example is that the 'openstack' CLI is used to geenrate a list of required images, which is present on an Undercloud only. It is also possibly to simply call the provided playbook to configure multple types at once:
 
