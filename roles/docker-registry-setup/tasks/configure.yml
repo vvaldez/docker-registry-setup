@@ -24,7 +24,7 @@
     action: insert
     rule_num: 1
     chain: INPUT
-    protocol: "{{ item.split('/').1"
+    protocol: "{{ item.split('/').1 }}"
     destination_port: "{{ docker_registry_setup_ports }}"
     ctstate: NEW
     syn: match
