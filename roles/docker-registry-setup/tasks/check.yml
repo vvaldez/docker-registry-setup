@@ -56,11 +56,11 @@
       loop_control:
         loop_var: dirs
   
-
-
-
-  set_fact:
-    docker_registry_setup_on_undercloud: True
+- block:
+    - name: set fact if services match
+      set_fact:
+        - docker_registry_setup_undercloud_services: True 
+        
   when:
     - 
 ...
