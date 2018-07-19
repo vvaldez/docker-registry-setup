@@ -69,4 +69,14 @@
   loop: "{{ dir_status.results }}"
   loop_control:
     loop_var: dir
+
+# Set undercloud option if everything matches
+- name: set fact if host profile matches undercloud
+  set_fact:
+    docker_registry_setup_on_undercloud: True
+  when:
+    - docker_registry_setup_undercloud_packes | default(False) | bool == True
+    - docker_registry_setup_undercloud_services | default(False) | bool == True
+    - docker_registry_setup_undercloud_files | default(False) | bool == True
+    - docker_registry_setup_undercloud_dirs | default(False) | bool == True
 ...
