@@ -94,11 +94,11 @@
     var: "{{ item }}"
     verbosity: 1
   loop:
-    - docker_registry_setup_undercloud_packes
-    - docker_registry_setup_undercloud_services
-    - docker_registry_setup_undercloud_files
-    - docker_registry_setup_undercloud_dirs
-    - docker_registry_setup_local_port
+    - "{{ docker_registry_setup_undercloud_packes }}"
+    - "{{ docker_registry_setup_undercloud_services }}"
+    - "{{ docker_registry_setup_undercloud_files }}"
+    - "{{ docker_registry_setup_undercloud_dirs }}"
+    - "{{ docker_registry_setup_local_port }}"
 
 - pause:
 ...
