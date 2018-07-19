@@ -17,6 +17,7 @@
   when: 
     - (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
     - docker_registry_setup_on_undercloud | default(False) | bool == True
+  become: yes
 
 # Download images from upstream registry and push them to local registry (non-Undercloud)
 - import_tasks: sync.yml

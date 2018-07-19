@@ -34,20 +34,20 @@
       command: systemctl status firewalld
       register: firewalld_status
       ignore_errors: yes
-      
+
     - name: check for iptables
       command: systemctl status iptables-services
       register: iptables_status
       ignore_errors: yes
-      
+
     - name: set fact for discovered firewall type
       set_fact:
-        docker_registry_setup_firewall: 'firewalld' 
+        docker_registry_setup_firewall: 'firewalld'
       when: not firewalld_status.failed | default(None)
 
     - name: set fact for discovered firewall type
       set_fact:
-        docker_registry_setup_firewall: 'iptables' 
+        docker_registry_setup_firewall: 'iptables'
       when: not iptables_status.failed | default(None)
   when: docker_registry_setup_firewall | default('')  == ''
 ...
