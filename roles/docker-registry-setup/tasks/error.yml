@@ -1,5 +1,5 @@
 ---
 - name: fail if local registry not reachable
   fail:
-    msg: "ERROR! No registry available at {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}{{ docker_registry_setup_url_suffix }} for version {{ docker_registry_setup_image_rhosp_namespace }} from {{ docker_registry_setup_upstream_hostname }}"
+    msg: "ERROR! No registry available at {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}{{ docker_registry_setup_url_suffix }} for version {{ docker_registry_setup_image_namespace }} from {{ docker_registry_setup_upstream_hostname }}"
 ...
