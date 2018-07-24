@@ -1,27 +1,24 @@
 ---
-- name: read proper conatiner_images file
-  include_vars: ../vars/{{ docker_registry_setup_image_namespace }}.yml
-
 - name: set fact if container_images already defined
   set_fact:
-    docker_registry_setup_images: "{{ container_images }}"
+    docker_registry_setup_container_images: "{{ container_images }}"
   when: container_images is defined
 
 - name: pull images from upstream registry
-  command: "docker pull --all-tags {{ image.imagename.split(':')[0] }}"
-  loop: "{{ docker_registry_setup_images }}"
+  command: "docker pull --all-tags {{ image.imagename }}"
+  loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
 
 - name: tag local images for local registry
-  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1].split(':')[0] }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_images }}"
+  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
+  loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
 
 - name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1].split(':')[0] }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_images }}"
+  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
+  loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
 
@@ -32,7 +29,7 @@
 #    state: present
 #    pull: true
 #    push: false
-#  loop: "{{ docker_registry_setup_images }}"
+#  loop: "{{ docker_registry_setup_container_images }}"
 #  loop_control:
 #    loop_var: image
 
@@ -45,8 +42,7 @@
 #    docker_host: "tcp://{{ inventory_hostname }}:{{ docker_registry_setup_local_port }}"
 #    pull: false
 #    push: true
-#  loop: "{{ docker_registry_setup_images }}"
+#  loop: "{{ docker_registry_setup_container_images }}"
 #  loop_control:
 #    loop_var: image
-
 ...

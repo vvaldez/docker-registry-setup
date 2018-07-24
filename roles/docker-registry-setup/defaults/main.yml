@@ -55,7 +55,52 @@ docker_registry_setup_ports:
   - "{{ docker_registry_setup_local_port }}/tcp"
 
 # Container images to populate in registry. This list by default only lists the OpenStack container images needed to deploy an OverCloud, but any images could be listed here, as long as they are found on the CDN
-# This list was taken from the overcloud-images.yaml that `openstack overcloud container image prepare` command outputs. As that file contains several variables used in the deployment, several of the container images are the same, thus causing duplicates. This list has been cleaned up of all dupes.
+# This list was taken from the yaml that `openstack overcloud container image prepare` command outputs. As that file contains several variables used in the deployment, several of the container images are the same, thus causing duplicates. This list has been cleaned up of all dupes.
+docker_registry_setup_container_images:
+- imagename: aodh-api
+- imagename: aodh-evaluator
+- imagename: aodh-listener
+- imagename: aodh-notifier
+- imagename: ceilometer-central
+- imagename: ceilometer-compute
+- imagename: ceilometer-notification
+- imagename: cinder-api
+- imagename: cinder-scheduler
+- imagename: cinder-volume
+- imagename: cron
+- imagename: glance-api
+- imagename: gnocchi-api
+- imagename: gnocchi-metricd
+- imagename: gnocchi-statsd
+- imagename: haproxy
+- imagename: heat-api-cfn
+- imagename: heat-api
+- imagename: heat-engine
+- imagename: horizon
+- imagename: iscsid
+- imagename: keystone
+- imagename: mariadb
+- imagename: memcached
+- imagename: neutron-dhcp-agent
+- imagename: neutron-l3-agent
+- imagename: neutron-metadata-agent
+- imagename: neutron-openvswitch-agent
+- imagename: neutron-server
+- imagename: nova-api
+- imagename: nova-compute
+- imagename: nova-conductor
+- imagename: nova-consoleauth
+- imagename: nova-libvirt
+- imagename: nova-novncproxy
+- imagename: nova-placement-api
+- imagename: nova-scheduler
+- imagename: panko-api
+- imagename: rabbitmq
+- imagename: redis
+- imagename: swift-account
+- imagename: swift-container
+- imagename: swift-object
+- imagename: swift-proxy-server
 
 # This variable defines the Undercloud profile. This 
 docker_registry_setup_undercloud_profile:
