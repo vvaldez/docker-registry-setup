@@ -1,6 +1,6 @@
 ---
 - name: read proper conatiner_images file
-  include_vars: ../vars/{{ docker_registry_setup_image_rhosp_version }}.yml
+  include_vars: ../vars/{{ docker_registry_setup_image_rhosp_namespace }}.yml
 
 - name: set fact if container_images already defined
   set_fact:
@@ -29,7 +29,7 @@
 #- name: push docker images
 #  docker_image: 
 #    name: "{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
-#    repository: "{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}"
+#    repository: "{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_namespace }}"
 #    state: present
 #    docker_host: "tcp://{{ inventory_hostname }}:{{ docker_registry_setup_local_port }}"
 #    pull: false
@@ -39,13 +39,13 @@
 #    loop_var: image
 
 - name: tag local images for local registry
-  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
+  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
 
 - name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
+  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
