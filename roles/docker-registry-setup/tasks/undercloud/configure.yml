@@ -2,7 +2,7 @@
 # This may not need to create the deployment file which is --output-env-file since we have a predictable template with essentially the same info, but including it just in case it is needed
 - name: create docker image files for upload and later deployment
   shell: . /home/stack/stackrc ; openstack overcloud container image prepare \
-      --namespace={{ docker_registry_setup_upstream_hostname }}/{{ docker_registry_setup_image_rhosp_version }} \
+    --namespace={{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_rhosp_version }} \
       --push-destination={{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} \
       --prefix={{ docker_registry_setup_image_prefix }} \
       --tag-from-label {version}-{release} \
