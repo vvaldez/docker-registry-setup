@@ -20,7 +20,7 @@ docker_registry_setup_url_suffix: "/v2/_catalog"
 docker_registry_setup_image_prefix: "openstack-"
 docker_registry_setup_image_rhosp_version: "13.0"
 docker_registry_setup_image_rhosp_tag: "{{ docker_registry_setup_image_rhosp_version }}"
-docker_registry_setup_image_rhosp_namespace: "rhosp{{ docker_registry_setup_image_rhosp_version.split('.')[1] }}"
+docker_registry_setup_image_rhosp_namespace: "rhosp{{ docker_registry_setup_image_rhosp_version.split('.')[0] }}"
 
 # Whether to dynamically check for an Undercloud. You can set this to false but be sure to also set 'docker_registry_setup_on_undercloud' correctly
 docker_registry_setup_undercloud_check: True

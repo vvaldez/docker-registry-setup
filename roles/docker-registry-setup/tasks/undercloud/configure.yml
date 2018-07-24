@@ -8,5 +8,4 @@
       --output-env-file={{ docker_registry_setup_overcloud_images_file }} \
       --tag {{ docker_registry_setup_rhosp_tag }} \
       --output-images-file={{ docker_registry_setup_upstream_images_file }}
-      #      --tag-from-label {version}-{release} \
 ...
