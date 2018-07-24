@@ -22,6 +22,10 @@
   loop_control:
     loop_var: image
   when: not docker_registry_setup_upstream_port == ''
+  register: docker_images_pulled
+
+- debug:
+    msg: "docker images - {{ docker_images_pulled }}"
 
 #### The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
 #- name: push docker images
