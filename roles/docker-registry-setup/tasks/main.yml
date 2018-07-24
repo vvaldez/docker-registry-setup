@@ -25,6 +25,7 @@
   when:
     - docker_registry_setup_sync | default(True) | bool == True
     - docker_registry_setup_on_undercloud | default(False) | bool == False
+  become: yes
 
 # Same thing but for Undercloud
 - import_tasks: undercloud/sync.yml
