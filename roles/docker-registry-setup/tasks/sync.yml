@@ -7,15 +7,23 @@
     docker_registry_setup_images: "{{ container_images }}"
   when: container_images is defined
 
-- name: pull docker images
-  docker_image: 
-    name: "{{ image.imagename }}"
-    state: present
-    pull: true
-    push: false
+# The following task DOES work, but we found that we need to pull all tags which requires the CLI
+#- name: pull docker images
+#  docker_image: 
+#    name: "{{ image.imagename }}"
+#    state: present
+#    pull: true
+#    push: false
+#  loop: "{{ docker_registry_setup_images }}"
+#  loop_control:
+#    loop_var: image
+#
+- name: pull images from upstream registry
+  command: "docker pull --all-tags {{ image.imagename.split(':')[0] }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
+
 
 #### The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
 #- name: push docker images
