@@ -1,38 +1,27 @@
 ---
+- name: read proper conatiner_images file
+  include_vars: ../vars/{{ docker_registry_setup_image_rhosp_version }}.yml
+
+- name: set fact if container_images already defined
+  set_fact:
+    docker_registry_setup_images: "{{ container_images }}"
+  when: container_images is defined
+
 - name: pull docker images
   docker_image: 
-    name: "{{ docker_registry_setup_upstream_hostname }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }}"
-    tag: "{{ docker_registry_setup_image_tag }}"
+    name: "{{ image.imagename }}"
     state: present
     pull: true
     push: false
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
-  when: docker_registry_setup_upstream_port == ''
-
-- name: pull docker images (with upstream port specified)
-  docker_image: 
-    name: "{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }}"
-    tag: "{{ docker_registry_setup_image_tag }}"
-    state: present
-    pull: true
-    push: false
-  loop: "{{ docker_registry_setup_images }}"
-  loop_control:
-    loop_var: image
-  when: not docker_registry_setup_upstream_port == ''
-  register: docker_images_pulled
-
-- debug:
-    msg: "docker images - {{ docker_images_pulled }}"
 
 #### The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
 #- name: push docker images
 #  docker_image: 
-#    name: "{{ docker_registry_setup_image_prefix }}{{ image }}"
+#    name: "{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
 #    repository: "{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}"
-#    tag: "{{ docker_registry_setup_image_tag }}"
 #    state: present
 #    docker_host: "tcp://{{ inventory_hostname }}:{{ docker_registry_setup_local_port }}"
 #    pull: false
@@ -42,21 +31,13 @@
 #    loop_var: image
 
 - name: tag local images for local registry
-  command: "docker tag {{ docker_registry_setup_upstream_hostname }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }}"
+  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
-  when: docker_registry_setup_upstream_port == ''
-
-- name: tag local images for local registry (with upstream port specified)
-  command: "docker tag {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }}"
-  loop: "{{ docker_registry_setup_images }}"
-  loop_control:
-    loop_var: image
-  when: not docker_registry_setup_upstream_port == ''
 
 - name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image }}:{{ docker_registry_setup_image_tag }}"
+  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_rhosp_version }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image

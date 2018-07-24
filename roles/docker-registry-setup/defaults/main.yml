@@ -3,7 +3,7 @@
 docker_registry_setup_upstream_hostname: registry.access.redhat.com
 
 # The upstream CDN doesn't use a port, so there is branch logic for split tasks based on if a port is used here or not. If using a different source other than the default CDN, then specify the port the registry is listening on here (e.g. 5000):
-docker_registry_setup_upstream_port: ''
+docker_registry_setup_upstream_port: '443'
 
 # This should be the target host, but can be set to something else if needed, for example:
 #docker_registry_setup_local_hostname: "{{ ansible_all_ipv4_addresses | ipaddr(provisioning_cidr) | first() }}"
@@ -55,56 +55,6 @@ docker_registry_setup_ports:
 
 # Container images to populate in registry. This list by default only lists the OpenStack container images needed to deploy an OverCloud, but any images could be listed here, as long as they are found on the CDN
 # This list was taken from the overcloud-images.yaml that `openstack overcloud container image prepare` command outputs. As that file contains several variables used in the deployment, several of the container images are the same, thus causing duplicates. This list has been cleaned up of all dupes.
-docker_registry_setup_images:
-  - aodh-api
-  - aodh-evaluator
-  - aodh-listener
-  - aodh-notifier
-  - ceilometer-compute
-  - ceilometer-central
-  - ceilometer-notification
-  - cinder-api
-  - cinder-scheduler
-  - cinder-volume
-  - mariadb
-  - cron
-  - glance-api
-  - gnocchi-api
-  - gnocchi-metricd
-  - gnocchi-statsd
-  - haproxy
-  - heat-api-cfn
-  - heat-api
-  - heat-engine
-  - horizon
-  - iscsid
-  - keystone
-  - memcached
-  - mariadb
-  - neutron-server
-  - neutron-dhcp-agent
-  - neutron-l3-agent
-  - neutron-metadata-agent
-  - nova-api
-  - nova-compute
-  - nova-conductor
-  - nova-api
-  - nova-consoleauth
-  - nova-compute
-  - nova-libvirt
-  - nova-api
-  - nova-placement-api
-  - nova-scheduler
-  - nova-novncproxy
-  - neutron-openvswitch-agent
-  - panko-api
-  - rabbitmq
-  - redis
-  - swift-account
-  - swift-proxy-server
-  - swift-container
-  - swift-object
-  - swift-proxy-server
 
 # This variable defines the Undercloud profile. This 
 docker_registry_setup_undercloud_profile:
