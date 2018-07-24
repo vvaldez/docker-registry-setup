@@ -39,13 +39,13 @@
 #    loop_var: image
 
 - name: tag local images for local registry
-  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
+  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[0] }}:{{ docker_registry_setup_image_tag }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
 
 - name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1] }}"
+  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[0] }}:{{ docker_registry_setup_image_tag }}"
   loop: "{{ docker_registry_setup_images }}"
   loop_control:
     loop_var: image
