@@ -7,6 +7,24 @@
     docker_registry_setup_images: "{{ container_images }}"
   when: container_images is defined
 
+- name: pull images from upstream registry
+  command: "docker pull --all-tags {{ image.imagename.split(':')[0] }}"
+  loop: "{{ docker_registry_setup_images }}"
+  loop_control:
+    loop_var: image
+
+- name: tag local images for local registry
+  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1].split(':')[0] }}:{{ docker_registry_setup_image_tag }}"
+  loop: "{{ docker_registry_setup_images }}"
+  loop_control:
+    loop_var: image
+
+- name: push docker images from local cache to local registry
+  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[-1].split(':')[0] }}:{{ docker_registry_setup_image_tag }}"
+  loop: "{{ docker_registry_setup_images }}"
+  loop_control:
+    loop_var: image
+
 # The following task DOES work, but we found that we need to pull all tags which requires the CLI
 #- name: pull docker images
 #  docker_image: 
@@ -17,15 +35,8 @@
 #  loop: "{{ docker_registry_setup_images }}"
 #  loop_control:
 #    loop_var: image
-#
-- name: pull images from upstream registry
-  command: "docker pull --all-tags {{ image.imagename.split(':')[0] }}"
-  loop: "{{ docker_registry_setup_images }}"
-  loop_control:
-    loop_var: image
 
-
-#### The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
+# The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
 #- name: push docker images
 #  docker_image: 
 #    name: "{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
@@ -38,15 +49,4 @@
 #  loop_control:
 #    loop_var: image
 
-- name: tag local images for local registry
-  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[0] }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_images }}"
-  loop_control:
-    loop_var: image
-
-- name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename.split('/')[0] }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_images }}"
-  loop_control:
-    loop_var: image
 ...
