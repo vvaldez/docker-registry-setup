@@ -1,6 +1,6 @@
 ---
 - name: pull images from upstream registry
-  command: "docker pull --all-tags "{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
+  command: "docker pull --all-tags {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
   loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
