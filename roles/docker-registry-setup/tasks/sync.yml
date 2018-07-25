@@ -1,17 +1,12 @@
 ---
-- name: set fact if container_images already defined
-  set_fact:
-    docker_registry_setup_container_images: "{{ container_images }}"
-  when: container_images is defined
-
 - name: pull images from upstream registry
-  command: "docker pull --all-tags {{ image.imagename }}"
+  command: "docker pull --all-tags "{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
   loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
 
-- name: tag local images for local registry
-  command: "docker tag {{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
+- name: tag retrieved images for local registry
+  command: "docker tag {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
   loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
