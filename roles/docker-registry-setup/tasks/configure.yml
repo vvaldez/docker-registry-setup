@@ -26,7 +26,7 @@
 
     - set_fact:
         undercloud_iptables_intput_chain_local_port_line: "{{ line }}"
-      when: line is search('^ACCEPT.*tcp.*dport.*' + docker_registry_setup_local_port)
+      when: line is search('^ACCEPT.*tcp.*dport.*' + docker_registry_setup_local_port|string)
       loop: "{{ undercloud_iptables_input_chain.stdout_lines }}"
       loop_control:
         loop_var: line
