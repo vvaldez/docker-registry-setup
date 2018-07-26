@@ -3,4 +3,6 @@
   shell: . /home/stack/stackrc ; openstack overcloud container image upload \
       --verbose \
       --config-file {{ docker_registry_setup_upstream_images_file }}
+  become: true
+  become_user: stack
 ...

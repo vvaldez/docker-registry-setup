@@ -1,6 +1,7 @@
 ---
 # This task checks for any images on the local registry
 - import_tasks: check.yml
+  become: true
 
 # Skip config if images found on local registry (override with 'docker_registry_setup_force: True')
 - import_tasks: skip.yml
@@ -10,28 +11,31 @@
 
 # Configure docker registry 
 - import_tasks: configure.yml
-  when: (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
-  become: yes
+  when:
+    - (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
+    - docker_registry_setup_on_undercloud | default(False) | bool == False
+  become: true
 
 # Additional task for Undercloud configure
 - import_tasks: undercloud/configure.yml
   when: 
     - (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
     - docker_registry_setup_on_undercloud | default(False) | bool == True
-  become: yes
+  become: true
 
 # Download images from upstream registry and push them to local registry (non-Undercloud)
 - import_tasks: sync.yml
   when:
-    - docker_registry_setup_sync | default(True) | bool == True
     - docker_registry_setup_on_undercloud | default(False) | bool == False
-  become: yes
+    - docker_registry_setup_sync | default(True) | bool == True
+  become: true
 
 # Same thing but for Undercloud
 - import_tasks: undercloud/sync.yml
   when:
     - docker_registry_setup_on_undercloud | default(False) | bool == True
     - docker_registry_setup_sync | default(True) | bool == True
+  become: true
 
 # Check and display images found with verbosity: 1
 - import_tasks: check.yml
