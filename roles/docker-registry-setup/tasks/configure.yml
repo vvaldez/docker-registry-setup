@@ -19,22 +19,35 @@
     - "restart firewalld"
   when: docker_registry_setup_firewall == 'firewalld'
 
-- name: configure iptables for docker
-  iptables:
-    action: insert
-    rule_num: 1
-    chain: INPUT
-    protocol: "{{ port.split('/').1 }}"
-    destination_port: "{{ port.split('/').0 }}"
-    ctstate: NEW
-    syn: match
-    jump: ACCEPT
-    comment: Accept incoming docker registry requests - added by Ansible
-  loop: "{{ docker_registry_setup_ports }}"
-  loop_control:
-    loop_var: port
-  notify:
-    - "restart iptables"
+- block:
+    - name: check iptables for open local port
+      command: iptables --list INPUT --numeric
+      register: undercloud_iptables_input_chain
+
+    - set_fact:
+        undercloud_iptables_intput_chain_local_port_line: "{{ line }}"
+      when: line is search('^ACCEPT.*tcp.*dport.*' + docker_registry_setup_local_port)
+      loop: "{{ undercloud_iptables_input_chain.stdout_lines }}"
+      loop_control:
+        loop_var: line
+
+    - name: configure iptables for docker
+      iptables:
+        action: insert
+        rule_num: 1
+        chain: INPUT
+        protocol: "{{ port.split('/').1 }}"
+        destination_port: "{{ port.split('/').0 }}"
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
+        comment: "Accept incoming docker registry requests - added by Ansible"
+      loop: "{{ docker_registry_setup_ports }}"
+      loop_control:
+        loop_var: port
+      notify:
+        - "restart iptables"
+      when: undercloud_iptables_intput_chain_local_port_line is not defined
   when: docker_registry_setup_firewall == 'iptables'
 
 - name: check for entries in /etc/sysconfig/docker
@@ -46,7 +59,7 @@
   set_fact:
     docker_registry_option_in_config: True
   when: 
-  - (docker_config.content | b64decode ) is search('INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}"')
+  - (docker_config.content | b64decode ) is search('^INSECURE_REGISTRY="--insecure-registry')
 
 - name: add registry option config to '/etc/sysconfig/docker' if needed
   lineinfile:
@@ -54,7 +67,6 @@
     line: 'INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}"'
     state: present
   notify: "restart docker"
-  become: yes
   when: docker_registry_option_in_config | default(False) | bool == False
 
 - name: check if registry urls already added to /etc/sysconfig/docker
@@ -71,7 +83,6 @@
     regexp: '^INSECURE_REGISTRY=.*$'
     state: present
   notify: "restart docker"
-  become: yes
   when:
     - docker_urls_in_config | default(False) | bool == False
     - docker_registry_option_in_config | default(False) | bool == True

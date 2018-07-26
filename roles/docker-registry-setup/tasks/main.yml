@@ -13,7 +13,6 @@
 - import_tasks: configure.yml
   when:
     - (docker_registry_setup_configured | default(False) | bool == False) or (docker_registry_setup_force | default(False) | bool == True)
-    - docker_registry_setup_on_undercloud | default(False) | bool == False
   become: true
 
 # Additional task for Undercloud configure
