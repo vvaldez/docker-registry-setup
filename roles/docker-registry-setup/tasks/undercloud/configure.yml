@@ -8,6 +8,5 @@
       --output-env-file={{ docker_registry_setup_overcloud_images_file }} \
       --tag {{ docker_registry_setup_image_tag }} \
       --output-images-file={{ docker_registry_setup_upstream_images_file }}
-  become: true
   become_user: stack
 ...
