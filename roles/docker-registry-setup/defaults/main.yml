@@ -29,8 +29,8 @@ docker_registry_setup_undercloud_check: True
 docker_registry_setup_on_undercloud: ''
 
 # For an OpenStack Undercloud docker registry, these files are generated.
-docker_registry_setup_upstream_images_file: "/tmp/upstream-container-images.yaml"
-docker_registry_setup_overcloud_images_file: "/tmp/overcloud-images.yaml"
+docker_registry_setup_upstream_images_file: "upstream-container-images.yaml"
+docker_registry_setup_overcloud_images_file: "overcloud-container-images.yaml"
 
 # Should the local registry sync with upstream registry?
 docker_registry_setup_sync: True
