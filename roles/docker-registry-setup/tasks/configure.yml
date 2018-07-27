@@ -53,6 +53,7 @@
 - name: check if insecure registry option already added to /etc/sysconfig/docker
   command: grep "^INSECURE_REGISTRY=.*" /etc/sysconfig/docker
   register: docker_registry_option_check
+  ignore_errors: true
 
 - set_fact:
     docker_registry_option_in_config: True
