@@ -81,7 +81,7 @@
 - name: add config to '/etc/sysconfig/docker' if needed
   lineinfile:
     dest: '/etc/sysconfig/docker'
-    line: 'INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}"'
+    line: 'INSECURE_REGISTRY="--insecure-registry {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }} --insecure-registry {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}"'
     regexp: '^INSECURE_REGISTRY=.*$'
     state: present
   notify: "restart docker"
