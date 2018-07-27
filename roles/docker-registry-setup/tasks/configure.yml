@@ -50,16 +50,13 @@
       when: undercloud_iptables_intput_chain_local_port_line is not defined
   when: docker_registry_setup_firewall == 'iptables'
 
-- name: check for entries in /etc/sysconfig/docker
-  slurp:
-    src: /etc/sysconfig/docker
-  register: docker_config
+- name: check if insecure registry option already added to /etc/sysconfig/docker
+  command: grep "^INSECURE_REGISTRY=.*" /etc/sysconfig/docker
+  register: docker_registry_option_check
 
-- name: check if insecure options already added to /etc/sysconfig/docker
-  set_fact:
+- set_fact:
     docker_registry_option_in_config: True
-  when: 
-  - (docker_config.content | b64decode ) is search('^INSECURE_REGISTRY="--insecure-registry')
+  when: docker_registry_option_check.rc == 0
 
 - name: add registry option config to '/etc/sysconfig/docker' if needed
   lineinfile:
@@ -68,6 +65,11 @@
     state: present
   notify: "restart docker"
   when: docker_registry_option_in_config | default(False) | bool == False
+
+- name: retrieve /etc/sysconfig/docker
+  slurp:
+    src: /etc/sysconfig/docker
+  register: docker_config
 
 - name: check if registry urls already added to /etc/sysconfig/docker
   set_fact:
