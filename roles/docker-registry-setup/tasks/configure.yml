@@ -50,6 +50,7 @@
       when: undercloud_iptables_intput_chain_local_port_line is not defined
   when: docker_registry_setup_firewall == 'iptables'
 
+# I could not find a good way to do a regex search for begining of line (^). the 'search()' test was not working properly and I wanted to be sure I was not catching a commented out line as a false positive.
 - name: check if insecure registry option already added to /etc/sysconfig/docker
   command: grep "^INSECURE_REGISTRY=.*" /etc/sysconfig/docker
   register: docker_registry_option_check
@@ -97,6 +98,6 @@
     - docker_registry_option_in_config | default(False) | bool == True
     - docker_urls_in_config | default(False) | bool == True
 
-# Restart docker right away
+# Restart services right away
 - meta: flush_handlers
 ...
