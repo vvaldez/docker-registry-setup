@@ -50,6 +50,9 @@ docker_registry_setup_services:
   - docker
   - docker-distribution
 
+# container image utility to copy/pull/tag/push images from upstream repo
+docker_registry_setup_container_image_utility: skopeo
+
 # ports used for setup in local firewall
 docker_registry_setup_ports:
   - "{{ docker_registry_setup_local_port }}/tcp"

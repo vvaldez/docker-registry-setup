@@ -1,0 +1,8 @@
+---
+- debug:
+    msg: "running sync for image='{{ metadata.image.imagename }}' tag='{{ tag }}'"
+  loop: "{{ (metadata.stdout | from_json).RepoTags }}"
+  loop_control:
+    loop_var: tag
+    label: "{{ tag }}"
+...

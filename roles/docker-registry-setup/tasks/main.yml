@@ -1,4 +1,8 @@
 ---
+# just for testing
+- import_tasks: sync.yml
+- pause:
+
 # This task checks for any images on the local registry
 - import_tasks: check.yml
   become: true

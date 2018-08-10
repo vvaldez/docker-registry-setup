@@ -1,4 +1,32 @@
 ---
+- name: install container image utiilty
+  package:
+    name: "{{ docker_registry_setup_container_image_utility }}"
+    state: present
+
+- name: retrieve container image metadata from upstream registry
+  command: "skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
+  loop: "{{ docker_registry_setup_container_images_test }}"
+  loop_control:
+    loop_var: image
+  register: container_image_metadata
+  no_log: true
+
+- debug:
+    msg: "image='{{ image.image.imagename }}' tags='{{ (image.stdout | from_json).RepoTags }}'"
+  loop: "{{ container_image_metadata.results }}"
+  loop_control:
+    loop_var: image
+    label: "{{ (image.stdout | from_json).RepoTags }}"
+
+- include_tasks: sync_by_tag.yml
+  loop: "{{ container_image_metadata.results }}"
+  loop_control:
+    loop_var: metadata
+    label: "{{ (metadata.stdout | from_json).RepoTags }}"
+
+- pause:
+
 - name: pull images from upstream registry
   command: "docker pull --all-tags {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
   loop: "{{ docker_registry_setup_container_images }}"
