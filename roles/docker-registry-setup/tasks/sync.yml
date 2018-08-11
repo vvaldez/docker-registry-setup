@@ -14,7 +14,7 @@
 - name: show discovered tags for image
   debug:
     msg: "Discovered tags for image='{{ metadata.image.imagename }}' tags='{{ (metadata.stdout | from_json).RepoTags }}'"
-   verbosity: 1
+    verbosity: 1
   loop: "{{ container_image_metadata.results }}"
   loop_control:
     loop_var: metadata
