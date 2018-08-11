@@ -6,7 +6,7 @@
 
 - name: retrieve container image metadata from upstream registry
   command: "skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
-  loop: "{{ docker_registry_setup_container_images_test }}"
+  loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
   register: container_image_metadata
