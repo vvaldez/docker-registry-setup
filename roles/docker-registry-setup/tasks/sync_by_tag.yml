@@ -1,7 +1,7 @@
 ---
 - name: show tag to operate on for image
   debug:
-    msg: "running sync for image='{{ metadata.image.imagename }}' tag='{{ tag }}'"
+    msg: "found tag='{{ tag }}' for image='{{ metadata.image.imagename }}'"
     verbosity: 1
   loop: "{{ (metadata.stdout | from_json).RepoTags }}"
   loop_control:
