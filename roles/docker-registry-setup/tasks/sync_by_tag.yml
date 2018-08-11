@@ -9,7 +9,7 @@
     label: "{{ tag }}"
 
 - name: sync image by tag from upstream to local registry
-  command: "skopeo copy docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }}"
+  command: "skopeo --tls-verify=false copy docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }}"
   loop: "{{ (metadata.stdout | from_json).RepoTags }}"
   loop_control:
     loop_var: tag
