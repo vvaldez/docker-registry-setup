@@ -5,10 +5,11 @@
     state: present
 
 - name: retrieve container image metadata from upstream registry
-  command: "skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
+  command: skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}
   loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
+    label: "{{ image.imagename }}"
   register: container_image_metadata
 
 - name: show discovered tags for image
