@@ -1,8 +1,16 @@
 ---
-- debug:
+- name: show tag to operate on for image
+  debug:
     msg: "running sync for image='{{ metadata.image.imagename }}' tag='{{ tag }}'"
+    verbosity: 1
   loop: "{{ (metadata.stdout | from_json).RepoTags }}"
   loop_control:
     loop_var: tag
     label: "{{ tag }}"
-...
+
+- name: sync image by tag from upstream to local registry
+  command: "skopeo copy docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ metadata.image.imagename }}:{{ tag }}"
+  loop: "{{ (metadata.stdout | from_json).RepoTags }}"
+  loop_control:
+    loop_var: tag
+    label: "{{ tag }}"
