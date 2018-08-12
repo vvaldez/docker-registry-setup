@@ -19,4 +19,4 @@
   register: copy_result
   retries: 10
   delay: 5
-  until: copy_result | success
+  until: copy_result is success
