@@ -5,67 +5,25 @@
     state: present
 
 - name: retrieve container image metadata from upstream registry
-  command: "skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
-  loop: "{{ docker_registry_setup_container_images_test }}"
+  command: skopeo inspect docker://{{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}
+  loop: "{{ docker_registry_setup_container_images }}"
   loop_control:
     loop_var: image
+    label: "{{ image.imagename }}"
   register: container_image_metadata
-  no_log: true
 
-- debug:
-    msg: "image='{{ image.image.imagename }}' tags='{{ (image.stdout | from_json).RepoTags }}'"
+- name: show discovered tags for image
+  debug:
+    msg: "Discovered tags for image='{{ metadata.image.imagename }}' tags='{{ (metadata.stdout | from_json).RepoTags }}'"
+    verbosity: 1
   loop: "{{ container_image_metadata.results }}"
   loop_control:
-    loop_var: image
-    label: "{{ (image.stdout | from_json).RepoTags }}"
+    loop_var: metadata
+    label: "{{ (metadata.stdout | from_json).RepoTags }}"
 
 - include_tasks: sync_by_tag.yml
   loop: "{{ container_image_metadata.results }}"
   loop_control:
     loop_var: metadata
     label: "{{ (metadata.stdout | from_json).RepoTags }}"
-
-- pause:
-
-- name: pull images from upstream registry
-  command: "docker pull --all-tags {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
-  loop: "{{ docker_registry_setup_container_images }}"
-  loop_control:
-    loop_var: image
-
-- name: tag retrieved images for local registry
-  command: "docker tag {{ docker_registry_setup_upstream_hostname }}:{{ docker_registry_setup_upstream_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }} {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_container_images }}"
-  loop_control:
-    loop_var: image
-
-- name: push docker images from local cache to local registry
-  command: "docker push {{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}/{{ docker_registry_setup_image_prefix }}{{ image.imagename }}:{{ docker_registry_setup_image_tag }}"
-  loop: "{{ docker_registry_setup_container_images }}"
-  loop_control:
-    loop_var: image
-
-# The following task DOES work, but we found that we need to pull all tags which requires the CLI
-#- name: pull docker images
-#  docker_image: 
-#    name: "{{ image.imagename }}"
-#    state: present
-#    pull: true
-#    push: false
-#  loop: "{{ docker_registry_setup_container_images }}"
-#  loop_control:
-#    loop_var: image
-
-# The following task is more desireable as it uses the docker_image module, but I could not get it working in a short time so for now implementing via docker cli
-#- name: push docker images
-#  docker_image: 
-#    name: "{{ docker_registry_setup_image_prefix }}{{ image.imagename }}"
-#    repository: "{{ docker_registry_setup_local_hostname }}:{{ docker_registry_setup_local_port }}/{{ docker_registry_setup_image_namespace }}"
-#    state: present
-#    docker_host: "tcp://{{ inventory_hostname }}:{{ docker_registry_setup_local_port }}"
-#    pull: false
-#    push: true
-#  loop: "{{ docker_registry_setup_container_images }}"
-#  loop_control:
-#    loop_var: image
 ...

@@ -57,6 +57,9 @@ docker_registry_setup_container_image_utility: skopeo
 docker_registry_setup_ports:
   - "{{ docker_registry_setup_local_port }}/tcp"
 
+# whether to verify tls certs on skopeo copy for local registry
+docker_registry_setup_tls_verify: false
+
 # Container images to populate in registry. This list by default only lists the OpenStack container images needed to deploy an OverCloud, but any images could be listed here, as long as they are found on the CDN
 # This list was taken from the yaml that `openstack overcloud container image prepare` command outputs. As that file contains several variables used in the deployment, several of the container images are the same, thus causing duplicates. This list has been cleaned up of all dupes.
 docker_registry_setup_container_images:
