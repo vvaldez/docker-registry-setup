@@ -16,4 +16,7 @@
   loop: "{{ (metadata.stdout | from_json).RepoTags }}"
   loop_control:
     loop_var: tag
-    label: "{{ tag }}"
+  register: copy_result
+  retries: 10
+  delay: 5
+  until: copy_result | success

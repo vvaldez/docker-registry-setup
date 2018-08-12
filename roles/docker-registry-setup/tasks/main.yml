@@ -1,8 +1,4 @@
 ---
-# just for testing
-- import_tasks: sync.yml
-- pause:
-
 # This task checks for any images on the local registry
 - import_tasks: check.yml
   become: true
@@ -26,14 +22,14 @@
     - docker_registry_setup_on_undercloud | default(False) | bool == True
   become: true
 
-# Download images from upstream registry and push them to local registry (non-Undercloud)
+# Download images from upstream registry and push them to local non-Undercloud registry
 - import_tasks: sync.yml
   when:
     - docker_registry_setup_on_undercloud | default(False) | bool == False
     - docker_registry_setup_sync | default(True) | bool == True
   become: true
 
-# Same thing but for Undercloud
+# Download images from upstream registry and push them to local Undercloud registry
 - import_tasks: undercloud/sync.yml
   when:
     - docker_registry_setup_on_undercloud | default(False) | bool == True
